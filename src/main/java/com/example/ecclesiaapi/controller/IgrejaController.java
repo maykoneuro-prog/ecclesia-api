@@ -8,7 +8,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/igrejas")
-@CrossOrigin(origins = "*") // ✅ IMPORTANTE PARA PUT E DELETE
+@CrossOrigin(origins = "*")
 public class IgrejaController {
 
     private final IgrejaService igrejaService;
@@ -17,54 +17,40 @@ public class IgrejaController {
         this.igrejaService = igrejaService;
     }
 
-    /* ✅ CREATE */
     @PostMapping
     public Igreja criar(@RequestBody Igreja igreja) {
-        return igrejaService.salvar(igreja, null, null);
+        return igrejaService.salvar(igreja);
     }
 
-    /* ✅ LIST */
-    @GetMapping
-    public List<Igreja> listar() {
-        return igrejaService.listar();
-    }
-
-    /* ✅ UPDATE */
     @PutMapping("/{id}")
     public Igreja alterar(@PathVariable Long id,
                           @RequestBody Igreja dados) {
 
-        Igreja igreja = igrejaService.buscarPorId(id);
+        Igreja existente = igrejaService.buscarPorId(id);
 
-        if (igreja == null) {
-            throw new RuntimeException("Igreja não encontrada");
+        if (existente == null) {
+            throw new RuntimeException("Registro não encontrado");
         }
 
-        igreja.setNome(dados.getNome());
-        igreja.setTipo(dados.getTipo());
-        igreja.setAtiva(dados.getAtiva());
-        igreja.setDiocese(dados.getDiocese());
-        igreja.setCep(dados.getCep());
-        igreja.setPais(dados.getPais());
-        igreja.setEndereco(dados.getEndereco());
-        igreja.setNumero(dados.getNumero());
-        igreja.setComplemento(dados.getComplemento());
-        igreja.setBairro(dados.getBairro());
-        igreja.setCidade(dados.getCidade());
+        existente.setNome(dados.getNome());
+        existente.setTipo(dados.getTipo());
+        existente.setAtiva(dados.getAtiva());
+        existente.setDiocese(dados.getDiocese());
+        existente.setCep(dados.getCep());
+        existente.setEndereco(dados.getEndereco());
+        existente.setBairro(dados.getBairro());
+        existente.setCidade(dados.getCidade());
 
-        return igrejaService.salvar(igreja, null, null);
+        return igrejaService.salvar(existente);
     }
 
-    /* ✅ DELETE */
     @DeleteMapping("/{id}")
     public void excluir(@PathVariable Long id) {
-
-        Igreja igreja = igrejaService.buscarPorId(id);
-
-        if (igreja == null) {
-            throw new RuntimeException("Igreja não encontrada");
-        }
-
         igrejaService.excluir(id);
+    }
+
+    @GetMapping
+    public List<Igreja> listar() {
+        return igrejaService.listar();
     }
 }

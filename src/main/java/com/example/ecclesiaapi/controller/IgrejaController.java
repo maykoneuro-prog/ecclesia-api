@@ -5,10 +5,10 @@ import com.example.ecclesiaapi.service.IgrejaService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/igrejas")
+@CrossOrigin(origins = "*") // ✅ IMPORTANTE PARA PUT E DELETE
 public class IgrejaController {
 
     private final IgrejaService igrejaService;
@@ -17,13 +17,19 @@ public class IgrejaController {
         this.igrejaService = igrejaService;
     }
 
-    // ✅ CREATE
+    /* ✅ CREATE */
     @PostMapping
     public Igreja criar(@RequestBody Igreja igreja) {
         return igrejaService.salvar(igreja, null, null);
     }
 
-    // ✅ UPDATE REAL
+    /* ✅ LIST */
+    @GetMapping
+    public List<Igreja> listar() {
+        return igrejaService.listar();
+    }
+
+    /* ✅ UPDATE */
     @PutMapping("/{id}")
     public Igreja alterar(@PathVariable Long id,
                           @RequestBody Igreja dados) {
@@ -49,8 +55,16 @@ public class IgrejaController {
         return igrejaService.salvar(igreja, null, null);
     }
 
-    @GetMapping
-    public List<Igreja> listar() {
-        return igrejaService.listar();
+    /* ✅ DELETE */
+    @DeleteMapping("/{id}")
+    public void excluir(@PathVariable Long id) {
+
+        Igreja igreja = igrejaService.buscarPorId(id);
+
+        if (igreja == null) {
+            throw new RuntimeException("Igreja não encontrada");
+        }
+
+        igrejaService.excluir(id);
     }
 }

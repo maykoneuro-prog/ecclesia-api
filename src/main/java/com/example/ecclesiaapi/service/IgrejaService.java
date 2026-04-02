@@ -44,4 +44,11 @@ public class IgrejaService {
     public List<Igreja> listarPorTipo(String tipo) {
         return igrejaRepository.findByTipo(tipo);
     }
+
+    /**
+     * ✅ BUSCAR POR ID (NECESSÁRIO PARA ALTERAÇÃO)
+     */
+    public Igreja buscarPorId(Long id) {
+        return igrejaRepository.findById(id).orElse(null);
+    }
 }

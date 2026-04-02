@@ -13,13 +13,19 @@ public class Igreja {
     private String nome;
 
     /**
-     * SEDE | PAROQUIA | MISSAO | COMUNIDADE
+     * CATEDRAL | PAROQUIA | MISSAO | COMUNIDADE
      */
     private String tipo;
 
     private String cnpj;
 
     private Boolean ativa;
+
+    /**
+     * ✅ DIOCESE (TEXTO SIMPLES POR ENQUANTO)
+     */
+    @Column(name = "diocese")
+    private String diocese;
 
     /* RELACIONAMENTO HIERÁRQUICO */
     @ManyToOne
@@ -80,6 +86,14 @@ public class Igreja {
 
     public void setAtiva(Boolean ativa) {
         this.ativa = ativa;
+    }
+
+    public String getDiocese() {
+        return diocese;
+    }
+
+    public void setDiocese(String diocese) {
+        this.diocese = diocese;
     }
 
     public Igreja getIgrejaPai() {

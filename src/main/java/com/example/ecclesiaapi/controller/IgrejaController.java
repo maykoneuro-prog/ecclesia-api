@@ -17,14 +17,37 @@ public class IgrejaController {
         this.igrejaService = igrejaService;
     }
 
+    /**
+     * ✅ CREATE e UPDATE
+     * - Sem ID  -> cria
+     * - Com ID  -> altera
+     */
     @PostMapping
     public Igreja salvar(@RequestBody Map<String, Object> body) {
 
-        Igreja igreja = new Igreja();
+        Igreja igreja;
+
+        // ✅ SE VEIO ID, BUSCA PARA ALTERAR
+        if (body.get("id") != null) {
+            Long id = Long.valueOf(body.get("id").toString());
+            igreja = igrejaService.buscarPorId(id);
+
+            if (igreja == null) {
+                throw new RuntimeException("Igreja não encontrada para alteração");
+            }
+        } else {
+            // ✅ SENÃO, CRIA NOVA
+            igreja = new Igreja();
+        }
+
         igreja.setNome((String) body.get("nome"));
         igreja.setTipo((String) body.get("tipo"));
         igreja.setCnpj((String) body.get("cnpj"));
         igreja.setAtiva((Boolean) body.get("ativa"));
+
+        // ✅ CAMPO DIOCESE (AGORA FUNCIONA)
+        igreja.setDiocese((String) body.get("diocese"));
+
         igreja.setCep((String) body.get("cep"));
         igreja.setPais((String) body.get("pais"));
         igreja.setEndereco((String) body.get("endereco"));

@@ -40,6 +40,9 @@ public class IgrejaService {
     public List<Igreja> listar() {
         return igrejaRepository.findAll();
     }
+    public void excluir(Long id) {
+    igrejaRepository.deleteById(id);
+}
 
     public List<Igreja> listarPorTipo(String tipo) {
         return igrejaRepository.findByTipo(tipo);

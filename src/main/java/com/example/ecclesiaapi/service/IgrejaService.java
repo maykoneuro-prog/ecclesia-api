@@ -1,9 +1,8 @@
 package com.example.ecclesiaapi.service;
 
 import com.example.ecclesiaapi.domain.Igreja;
-import com.example.ecclesiaapi.domain.Pessoa;
 import com.example.ecclesiaapi.repository.IgrejaRepository;
-import com.example.ecclesiaapi.repository.PessoaRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,46 +11,33 @@ import java.util.List;
 public class IgrejaService {
 
     private final IgrejaRepository igrejaRepository;
-    private final PessoaRepository pessoaRepository;
 
-    public IgrejaService(IgrejaRepository igrejaRepository,
-                         PessoaRepository pessoaRepository) {
+    public IgrejaService(IgrejaRepository igrejaRepository) {
         this.igrejaRepository = igrejaRepository;
-        this.pessoaRepository = pessoaRepository;
     }
 
-    public Igreja salvar(Igreja igreja, Long igrejaPaiId, Long responsavelId) {
-
-        if (igrejaPaiId != null) {
-            Igreja pai = igrejaRepository.findById(igrejaPaiId)
-                    .orElseThrow(() -> new RuntimeException("Igreja pai não encontrada"));
-            igreja.setIgrejaPai(pai);
-        }
-
-        if (responsavelId != null) {
-            Pessoa responsavel = pessoaRepository.findById(responsavelId)
-                    .orElseThrow(() -> new RuntimeException("Responsável não encontrado"));
-            igreja.setResponsavel(responsavel);
-        }
-
+    /* ✅ CREATE / UPDATE */
+    @Transactional
+    public Igreja salvar(Igreja igreja) {
         return igrejaRepository.save(igreja);
     }
 
+    /* ✅ LIST */
     public List<Igreja> listar() {
         return igrejaRepository.findAll();
     }
-    public void excluir(Long id) {
-    igrejaRepository.deleteById(id);
-}
 
-    public List<Igreja> listarPorTipo(String tipo) {
-        return igrejaRepository.findByTipo(tipo);
-    }
-
-    /**
-     * ✅ BUSCAR POR ID (NECESSÁRIO PARA ALTERAÇÃO)
-     */
+    /* ✅ FIND BY ID */
     public Igreja buscarPorId(Long id) {
         return igrejaRepository.findById(id).orElse(null);
+    }
+
+    /* ✅ DELETE REAL */
+    @Transactional
+    public void excluir(Long id) {
+        if (!igrejaRepository.existsById(id)) {
+            throw new RuntimeException("Registro não encontrado para exclusão");
+        }
+        igrejaRepository.deleteById(id);
     }
 }

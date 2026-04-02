@@ -17,61 +17,40 @@ public class IgrejaController {
         this.igrejaService = igrejaService;
     }
 
-    /**
-     * ✅ CREATE e UPDATE
-     * - Sem ID  -> cria
-     * - Com ID  -> altera
-     */
+    // ✅ CREATE
     @PostMapping
-    public Igreja salvar(@RequestBody Map<String, Object> body) {
+    public Igreja criar(@RequestBody Igreja igreja) {
+        return igrejaService.salvar(igreja, null, null);
+    }
 
-        Igreja igreja;
+    // ✅ UPDATE REAL
+    @PutMapping("/{id}")
+    public Igreja alterar(@PathVariable Long id,
+                          @RequestBody Igreja dados) {
 
-        // ✅ SE VEIO ID, BUSCA PARA ALTERAR
-        if (body.get("id") != null) {
-            Long id = Long.valueOf(body.get("id").toString());
-            igreja = igrejaService.buscarPorId(id);
+        Igreja igreja = igrejaService.buscarPorId(id);
 
-            if (igreja == null) {
-                throw new RuntimeException("Igreja não encontrada para alteração");
-            }
-        } else {
-            // ✅ SENÃO, CRIA NOVA
-            igreja = new Igreja();
+        if (igreja == null) {
+            throw new RuntimeException("Igreja não encontrada");
         }
 
-        igreja.setNome((String) body.get("nome"));
-        igreja.setTipo((String) body.get("tipo"));
-        igreja.setCnpj((String) body.get("cnpj"));
-        igreja.setAtiva((Boolean) body.get("ativa"));
+        igreja.setNome(dados.getNome());
+        igreja.setTipo(dados.getTipo());
+        igreja.setAtiva(dados.getAtiva());
+        igreja.setDiocese(dados.getDiocese());
+        igreja.setCep(dados.getCep());
+        igreja.setPais(dados.getPais());
+        igreja.setEndereco(dados.getEndereco());
+        igreja.setNumero(dados.getNumero());
+        igreja.setComplemento(dados.getComplemento());
+        igreja.setBairro(dados.getBairro());
+        igreja.setCidade(dados.getCidade());
 
-        // ✅ CAMPO DIOCESE (AGORA FUNCIONA)
-        igreja.setDiocese((String) body.get("diocese"));
-
-        igreja.setCep((String) body.get("cep"));
-        igreja.setPais((String) body.get("pais"));
-        igreja.setEndereco((String) body.get("endereco"));
-        igreja.setNumero((String) body.get("numero"));
-        igreja.setComplemento((String) body.get("complemento"));
-        igreja.setBairro((String) body.get("bairro"));
-        igreja.setCidade((String) body.get("cidade"));
-
-        Long igrejaPaiId = body.get("igrejaPaiId") != null
-                ? Long.valueOf(body.get("igrejaPaiId").toString())
-                : null;
-
-        Long responsavelId = body.get("responsavelId") != null
-                ? Long.valueOf(body.get("responsavelId").toString())
-                : null;
-
-        return igrejaService.salvar(igreja, igrejaPaiId, responsavelId);
+        return igrejaService.salvar(igreja, null, null);
     }
 
     @GetMapping
-    public List<Igreja> listar(@RequestParam(required = false) String tipo) {
-        if (tipo != null) {
-            return igrejaService.listarPorTipo(tipo);
-        }
+    public List<Igreja> listar() {
         return igrejaService.listar();
     }
 }
